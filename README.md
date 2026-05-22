@@ -20,7 +20,7 @@ A small Python tool that downloads videos from a Telegram channel using Telethon
 If you want to use the repository from GitHub, clone it first:
 
 ```powershell
-git clone https://github.com/chaudhary64/telegram-bulk-downloader.git
+git clone https://github.com/chaudhary64/telegram-bulk-downloader
 cd telegram-bulk-downloader
 ```
 

@@ -1,5 +1,6 @@
 import os
 import asyncio
+from datetime import datetime
 from dotenv import load_dotenv
 from telethon.sync import TelegramClient
 from tqdm import tqdm
@@ -47,13 +48,47 @@ def format_seconds(seconds):
     return f"{minutes:02d}:{secs:02d}"
 
 
+def prompt_yes_no(question):
+    while True:
+        answer = input(f"{question} [y/n]: ").strip().lower()
+        if answer in {"y", "yes"}:
+            return True
+        if answer in {"n", "no"}:
+            return False
+        print("Please answer with y or n.")
+
+
+def prompt_cutoff_date():
+    while True:
+        raw_value = input("Enter the start date (YYYY-MM-DD): ").strip()
+        try:
+            return datetime.strptime(raw_value, "%Y-%m-%d").date()
+        except ValueError:
+            print("Please enter a valid date in YYYY-MM-DD format.")
+
+
+def message_is_on_or_after(message, cutoff_date):
+    return message.date is not None and message.date.date() >= cutoff_date
+
+
 async def main():
     entity = await client.get_entity(channel_link)
+
+    use_date_filter = prompt_yes_no(
+        "Do you want to download videos from a specific date till latest"
+    )
+    cutoff_date = prompt_cutoff_date() if use_date_filter else None
 
     videos = []
 
     async for message in client.iter_messages(entity):
+        if cutoff_date and message.date and message.date.date() < cutoff_date:
+            break
+
         if message.video:
+            if cutoff_date and not message_is_on_or_after(message, cutoff_date):
+                continue
+
             filename = get_download_target(message)
             file_path = os.path.join(download_folder, filename)
             file_size = message.file.size or 0

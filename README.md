@@ -86,6 +86,8 @@ python -u .\downlaod.py
 
 The first run may ask you to sign in to Telegram. After that, the session is reused automatically.
 
+When the script starts, it will ask whether you want to download videos from a specific date through the latest message. If you choose yes, enter the start date in `YYYY-MM-DD` format.
+
 ## Output
 
 Downloaded videos are saved in:
